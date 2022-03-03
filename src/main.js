@@ -5,8 +5,7 @@ const routing = {
   '/user/name': async () => 'Pavel',
 };
 
-
-const PORT = process.env.PORT || 8000
+const PORT = process.env.PORT || 8000;
 const logger = console;
 
 const server = http.createServer(async (req, res) => {
@@ -23,7 +22,7 @@ const server = http.createServer(async (req, res) => {
   const responseStr = JSON.stringify(response);
   res.writeHead(200);
   res.end(responseStr);
-})
+});
 
-logger.log(`Server start on: http://localhost:${PORT}/`)
+logger.log(`Server start on: http://localhost:${PORT}/`);
 server.listen(PORT);
