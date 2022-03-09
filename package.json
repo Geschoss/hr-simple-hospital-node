@@ -2,14 +2,14 @@
   "name": "hr-simple-hospital-node",
   "version": "0.0.1",
   "description": "",
-  "main": "src/index.js",
-  "type": "module",
+  "main": "application/index.js",
   "engines": {
     "node": "16.x"
   },
   "scripts": {
-    "start": "node ./src/main.js",
-    "test": "npm test"
+    "start": "node ./application/main.js",
+    "test": "npm test",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -22,6 +22,11 @@
   },
   "homepage": "https://github.com/Geschoss/hr-simple-hospital-node#readme",
   "devDependencies": {
+    "@types/pg": "^8.6.5",
     "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "pg": "^8.7.3",
+    "typescript": "^4.6.2"
   }
 }
