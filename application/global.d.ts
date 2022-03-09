@@ -19,7 +19,7 @@ declare type Lib = {
 declare const lib: Lib;
 
 declare type Context = {
-  client: Socket;
+  client: WSClient;
 };
 
 declare const context: Context;

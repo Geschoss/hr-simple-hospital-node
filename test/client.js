@@ -1,10 +1,12 @@
 'use strict';
+const WebSocket = require('ws');
+
 const net = require('net');
 const readline = require('node:readline/promises');
 const { stdin, stdout } = require('node:process');
 
 const rl = readline.createInterface({ input: stdin, output: stdout });
-const socket = new net.Socket();
+const socket = new WebSocket('ws://localhost:8000');
 
 const api = {
   subscribe: () => ({
@@ -39,12 +41,8 @@ const api = {
     method: `${method}`,
   }),
 };
-socket.connect({
-  port: 8000,
-  host: '127.0.0.1',
-});
 
-socket.on('data', (message) => {
+socket.on('message', (message) => {
   const { status, payload, error } = JSON.parse(message.toString());
   console.log({ status, payload, error });
 });
@@ -66,7 +64,7 @@ socket.on('close', () => {
     }
     const msg = handler(...args);
     const res = JSON.stringify(msg);
-    socket.write(res);
+    socket.send(res);
     continue;
   } while (answer !== 'q');
 

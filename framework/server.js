@@ -1,4 +1,4 @@
-const net = require('net');
+const WebSocket = require('ws');
 
 class WSClient {
   constructor(socket) {
@@ -6,7 +6,7 @@ class WSClient {
   }
 
   send(payload) {
-    this.socket.write(JSON.stringify(payload));
+    this.socket.send(JSON.stringify(payload));
   }
 
   notify(payload) {
@@ -27,7 +27,7 @@ class WSServer {
   }
 
   start() {
-    const server = net.createServer();
+    const server = new WebSocket.Server({ port: this.port });
 
     server.on('connection', (socket) => {
       this.sockets.add(socket);
@@ -39,7 +39,7 @@ class WSServer {
         this.application.console.log(`Connection count: ${this.sockets.size}`);
       });
       const client = new WSClient(socket);
-      socket.on('data', (data) => this.onData(client, data));
+      socket.on('message', (data) => this.onData(client, data));
     });
 
     server.on('error', (err) => {
@@ -49,17 +49,19 @@ class WSServer {
     this.application.console.log(
       `Server start on: http://localhost:${this.port}/`
     );
-    server.listen(this.port);
   }
 
   async onData(client, buffer) {
-    const { method, payload } = bufferToJson(buffer);
-    this.application.console.log(`New fetch to: ${method}`);
-    const api = this.application.api.tree[method];
-    this.application.context.client = client;
-    const response = await this.makeResponse(api, method, payload);
-    delete this.application.context.client;
-    client.send(response);
+    try {
+      const { method, payload } = bufferToJson(buffer);
+      const api = this.application.api.tree[method];
+      this.application.context.client = client;
+      const response = await this.makeResponse(api, method, payload);
+      delete this.application.context.client;
+      client.send(response);
+    } catch (error) {
+      this.application.console.error({ error });
+    }
   }
 
   async makeResponse(api, method, payload) {
